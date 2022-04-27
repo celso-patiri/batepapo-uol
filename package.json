@@ -5,8 +5,8 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "devStart": "nodemon index.js"
+    "test": "node node_modules/.bin/jest --coverage",
+    "devStart": "nodemon src/index.js"
   },
   "repository": {
     "type": "git",
@@ -28,6 +28,9 @@
     "mongodb": "^4.5.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.15"
+    "@babel/preset-env": "^7.16.11",
+    "jest": "^28.0.2",
+    "nodemon": "^2.0.15",
+    "supertest": "^6.2.3"
   }
 }
