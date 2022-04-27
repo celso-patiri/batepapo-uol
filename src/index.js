@@ -13,12 +13,17 @@ app.use(express.json());
 async function main() {
   const client = new MongoClient(URI);
 
-  await client.connect();
-  app.db = client.db(DB_NAME);
+  try {
+    await client.connect();
+    app.db = client.db(DB_NAME);
+    console.log("Connected to mongodb");
 
-  app.use("/participants", participantsRouter);
+    app.use("/participants", participantsRouter);
+  } finally {
+    await client.close();
+  }
 }
 
-main();
+main().catch(console.dir);
 
 app.listen(PORT, () => console.log("Listening on port " + PORT));
