@@ -4,14 +4,14 @@ const addParticipant = async (req, res, _next) => {
   try {
     const name = req.body.name;
 
-    const collection = req.app.db.collection("participants");
-    const existingParticipant = await collection.findOne({ name });
+    const participants = req.app.db.collection("participants");
+    const existingParticipant = await participants.findOne({ name });
 
     if (existingParticipant) {
       res.status(409);
       return res.json(returnMessage(true, `Name ${name} already taken`));
     } else {
-      collection
+      participants
         .insertOne({ name })
         .then(() => {
           res.status(201);
