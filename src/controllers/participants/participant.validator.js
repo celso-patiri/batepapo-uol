@@ -1,5 +1,5 @@
 import joi from "joi";
-import errorFunction from "../../utils/errorFunction.js";
+import returnMessage from "../../utils/returnMessage.js";
 
 const validation = joi.object({
   name: joi.string().min(1).required(),
@@ -13,7 +13,7 @@ const participantValidation = async (req, res, next) => {
   const { error } = validation.validate(payload);
   if (error) {
     res.status(422);
-    return res.json(errorFunction(true, "Name cannot be empty"));
+    return res.json(returnMessage(true, "Name cannot be empty"));
   } else {
     next();
   }

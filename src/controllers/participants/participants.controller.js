@@ -1,4 +1,4 @@
-import errorFunction from "../../utils/errorFunction.js";
+import returnMessage from "../../utils/returnMessage.js";
 
 const addParticipant = async (req, res, _next) => {
   try {
@@ -9,23 +9,24 @@ const addParticipant = async (req, res, _next) => {
 
     if (existingParticipant) {
       res.status(409);
-      return res.json(errorFunction(true, `Name ${name} already taken`));
+      return res.json(returnMessage(true, `Name ${name} already taken`));
     } else {
       collection
         .insertOne({ name })
         .then(() => {
           res.status(201);
-          res.json(errorFunction(false, `Participant ${name} added`, { name }));
+          res.json(returnMessage(false, `Participant ${name} added`, { name }));
         })
         .catch((err) => {
           console.error(err);
           res.status(403);
-          res.json(errorFunction(true, `Error creating participant ${name}`));
+          res.json(returnMessage(true, `Error creating participant ${name}`));
         });
     }
   } catch (err) {
+    console.error(err);
     res.status(400);
-    res.json(errorFunction(true, err.message));
+    res.json(returnMessage(true, err.message));
   }
 };
 export { addParticipant };
