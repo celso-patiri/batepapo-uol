@@ -2,6 +2,7 @@ import express from "express";
 import "dotenv/config";
 import { MongoClient } from "mongodb";
 import participantsRouter from "./routes/participants/participants.routes.js";
+import messagesRouter from "./routes/messages/messages.routes.js";
 
 const PORT = process.env.PORT;
 const DB_NAME = process.env.DB_NAME;
@@ -20,6 +21,7 @@ async function main() {
   console.log("Connected to mongodb");
 
   app.use("/participants", participantsRouter);
+  app.use("/messages", messagesRouter);
 }
 
 main().catch(console.dir);

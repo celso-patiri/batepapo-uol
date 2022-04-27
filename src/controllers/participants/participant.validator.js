@@ -6,17 +6,15 @@ const validation = joi.object({
 });
 
 const participantValidation = async (req, res, next) => {
-  const payload = {
-    name: req.body.name,
-  };
+  const payload = req.body;
 
   const { error } = validation.validate(payload);
   if (error) {
     res.status(422);
     return res.json(returnMessage(true, "Name cannot be empty"));
-  } else {
-    next();
   }
+
+  next();
 };
 
 export default participantValidation;
