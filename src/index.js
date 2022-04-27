@@ -13,15 +13,13 @@ app.use(express.json());
 async function main() {
   const client = new MongoClient(URI);
 
-  try {
-    await client.connect();
-    app.db = client.db(DB_NAME);
-    console.log("Connected to mongodb");
+  await client.connect();
+  await client.db(DB_NAME).command({ ping: 1 });
 
-    app.use("/participants", participantsRouter);
-  } finally {
-    await client.close();
-  }
+  app.db = client.db(DB_NAME);
+  console.log("Connected to mongodb");
+
+  app.use("/participants", participantsRouter);
 }
 
 main().catch(console.dir);
