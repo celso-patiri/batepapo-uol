@@ -7,7 +7,7 @@
   "scripts": {
     "test": "node node_modules/.bin/jest",
     "testWatch": "node node_modules/.bin/jest --watch",
-    "devStart": "nodemon src/index.js"
+    "devStart": "nodemon src/index.js --verbose"
   },
   "repository": {
     "type": "git",
@@ -36,6 +36,15 @@
     "supertest": "^6.2.3"
   },
   "jest": {
-    "preset": "@shelf/jest-mongodb"
+    "preset": "@shelf/jest-mongodb",
+    "coveragePathIgnorePatterns": [
+      "node_modules",
+      "globalConfig.json"
+    ]
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "globalConfig.json"
+    ]
   }
 }
