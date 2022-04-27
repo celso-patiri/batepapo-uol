@@ -12,12 +12,11 @@ app.use(express.json());
 
 async function main() {
   const client = new MongoClient(URI);
-  client.connect((_err) => {
-    console.log("Connected to mongo");
 
-    app.db = client.db(DB_NAME);
-    app.use("/participants", participantsRouter);
-  });
+  await client.connect();
+  app.db = client.db(DB_NAME);
+
+  app.use("/participants", participantsRouter);
 }
 
 main();
