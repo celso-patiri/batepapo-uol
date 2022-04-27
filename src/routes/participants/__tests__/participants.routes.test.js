@@ -1,7 +1,10 @@
 import { jestExpect as expect } from "@jest/expect";
 import "dotenv/config";
 import { MongoClient } from "mongodb";
-import { addParticipant } from "../../../controllers/participants/participants.controller.js";
+import {
+  getParticipants,
+  addParticipant,
+} from "../../../controllers/participants/participants.controller.js";
 import participantValidation from "../../../controllers/participants/participant.validator.js";
 
 const DB_NAME = process.env.DB_NAME;
@@ -43,8 +46,14 @@ describe("Participants router tests", () => {
 
   it("Should return error 409 if name is already taken", async () => {
     req.body.name = "teste";
-    const responseJson = await addParticipant(req, res);
+    await addParticipant(req, res);
     expect(res.statusCode).toBe(409);
-    expect(responseJson.message).toMatch(/already taken/i);
+  });
+
+  it("Should return an array from GET /participants", async () => {
+    const responseJson = await getParticipants(req, res);
+
+    expect(res.statusCode).toBe(200);
+    expect(responseJson.data.participants).toBeInstanceOf(Array);
   });
 });
