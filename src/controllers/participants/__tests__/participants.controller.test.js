@@ -38,7 +38,7 @@ describe("Participants controller tests", () => {
     const responseJson = await participantValidation(req, res, null);
 
     expect(res.statusCode).toBe(422);
-    expect(responseJson.message).toMatch(/name cannot be empty/i);
+    expect(responseJson.message).toMatch(/'name' cannot be empty/i);
   });
 
   it("Should return error 409 if name is already taken", async () => {
@@ -49,7 +49,6 @@ describe("Participants controller tests", () => {
 
   it("Should return an array from GET /participants", async () => {
     const responseJson = await getParticipants(req, res);
-
     expect(res.statusCode).toBe(200);
     expect(responseJson.data.participants).toBeInstanceOf(Array);
   });
