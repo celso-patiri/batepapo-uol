@@ -1,8 +1,8 @@
-import express from "express";
 import "dotenv/config";
+import express from "express";
 import { MongoClient } from "mongodb";
-import participantsRouter from "./routes/participants/participants.routes.js";
 import messagesRouter from "./routes/messages/messages.routes.js";
+import participantsRouter from "./routes/participants/participants.routes.js";
 
 const PORT = process.env.PORT;
 const DB_NAME = process.env.DB_NAME;

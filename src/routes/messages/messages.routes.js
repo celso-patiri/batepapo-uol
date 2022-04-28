@@ -1,10 +1,13 @@
 import express from "express";
+import {
+  addMessage,
+  getMessages,
+} from "../../controllers/messages/messages.controller.js";
+import messageValidation from "../../controllers/messages/messages.validator.js";
 
 const router = express.Router();
-// TODO: implement middleware
-router.get("/", (_req, res) => res.send("TODO: GET /messages"));
 
-// TODO: implement middleware
-router.post("/", (_req, res) => res.send("TODO: POST /messages"));
+router.get("/", getMessages);
+router.post("/", messageValidation, addMessage);
 
 export default router;
