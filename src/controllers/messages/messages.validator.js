@@ -16,14 +16,7 @@ const messageSchema = Joi.object({
     .messages({ "any.required": "'type' is a required field" }),
 });
 
-const messageValidation = async (req, res, next) => {
-  const payload = req.body;
-
-  const { error } = messageSchema.validate(payload);
-  if (error) {
-    res.status(422);
-    return res.json(returnMessage(true, error.details[0].message));
-  }
+const headerValidation = async (req, res, next) => {
   if (!req.headers.user) {
     res.status(422);
     return res.json(returnMessage(true, "'User' header is required"));
@@ -32,4 +25,16 @@ const messageValidation = async (req, res, next) => {
   next();
 };
 
-export default messageValidation;
+const messageValidation = async (req, res, next) => {
+  const payload = req.body;
+
+  const { error } = messageSchema.validate(payload);
+  if (error) {
+    res.status(422);
+    return res.json(returnMessage(true, error.details[0].message));
+  }
+
+  next();
+};
+
+export { headerValidation, messageValidation };
