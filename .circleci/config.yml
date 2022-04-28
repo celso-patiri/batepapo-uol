@@ -12,7 +12,7 @@ jobs:
   build-and-test:
     docker:
       - image: cimg/node:16.10
-      - image: circleci/mongo:5.0.6-focal-ram
+      - image: cimg/mongo:5.0.6-focal-ram
     environment:
       MONGO_USERNAME: mongouser
       MONGO_PASSWORD: mongopass
