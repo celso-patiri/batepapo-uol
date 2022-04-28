@@ -7,7 +7,7 @@ import participantValidation from "../participant.validator.js";
 const DB_NAME = process.env.DB_NAME;
 const URI = `${process.env.MONGO_URI}/${DB_NAME}`;
 
-describe("Participants router tests", () => {
+describe("Participants controller tests", () => {
   const client = new MongoClient(URI);
 
   const req = {
