@@ -41,12 +41,6 @@ describe("Participants controller tests", () => {
     expect(responseJson.message).toMatch(/'name' cannot be empty/i);
   });
 
-  it("Should return error 409 if name is already taken", async () => {
-    req.body.name = "teste";
-    await addParticipant(req, res);
-    expect(res.statusCode).toBe(409);
-  });
-
   it("Should return an array from GET /participants", async () => {
     const responseJson = await getParticipants(req, res);
     expect(res.statusCode).toBe(200);

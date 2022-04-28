@@ -28,13 +28,14 @@ describe("participants router tests", () => {
   });
 
   test("POST /participants", async () => {
+    const name = Date.now().toString();
     await request(app)
       .post("/participants")
-      .send({ name: "test" })
-      .expect(409)
+      .send({ name })
+      .expect(201)
       .then((res) => {
         const response = JSON.parse(res.text);
-        expect(response.message).toMatch(/name test already taken/i);
+        expect(response.message).toMatch(/added/i);
       });
   });
 });
