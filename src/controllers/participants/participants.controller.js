@@ -3,12 +3,12 @@ import returnMessage from "../../utils/returnMessage.js";
 const getParticipants = async (req, res) => {
   try {
     const participants = req.app.db.collection("participants");
-    const results = await participants.find({});
+    const results = await participants.find({}).toArray();
 
     res.status(200);
     return res.json(
       returnMessage(false, "Participants successfully retrieved", {
-        participants: Array.from(results),
+        participants: results,
       })
     );
   } catch (err) {
