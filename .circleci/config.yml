@@ -1,0 +1,53 @@
+# Use the latest 2.1 version of CircleCI pipeline process engine.
+# See: https://circleci.com/docs/2.0/configuration-reference
+version: 2.1
+
+orbs:
+  # The Node.js orb contains a set of prepackaged CircleCI configuration you can utilize
+  # Orbs reduce the amount of configuration required for common tasks.
+  # See the orb documentation here: https://circleci.com/developer/orbs/orb/circleci/node
+  node: circleci/node@4.7
+
+jobs:
+  build-and-test:
+    docker:
+      - image: cimg/node:16.10
+      - image: circleci/mongo:5.0.6-focal-ram
+    environment:
+      MONGO_USERNAME: mongouser
+      MONGO_PASSWORD: mongopass
+
+    steps:
+      - run:
+          name: MongoDB Install
+          command: |
+            sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 9DA31620334BD75D9DCB49F368818C72E52529D4
+            echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.0.list
+            sudo apt-get update
+            sudo apt-get install -y mongodb-org-shell
+      - setup_remote_docker
+      - run:
+          name: Waiting for Mongo
+          command: dockerize -wait tcp://localhost:27017 -timeout 1m
+      - checkout
+      - run:
+          name: Get versions
+          command: |
+            node -v
+            npm -v
+            mongo localhost --eval "db.version()"
+      - node/install-packages:
+          pkg-manager: npm
+      - run:
+          name: Run tests
+          command: npm run ci:test
+
+workflows:
+  # Below is the definition of your workflow.
+  # Inside the workflow, you provide the jobs you want to run, e.g this workflow runs the build-and-test job above.
+  # CircleCI will run this workflow on every commit.
+  # For more details on extnding your workflow, see the configuration docs: https://circleci.com/docs/2.0/configuration-reference/#workflows
+  sample:
+    jobs:
+      - build-and-test
+      # - node/test

@@ -5,7 +5,8 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "node node_modules/.bin/jest",
+    "test": "node node_modules/.bin/jest --coverage",
+    "ci:test": "node node_modules/.bin/jest --ci -runInBand --detectOpenHandles --forceExit",
     "testWatch": "node node_modules/.bin/jest --watch",
     "devStart": "nodemon src/server.js --verbose"
   },
