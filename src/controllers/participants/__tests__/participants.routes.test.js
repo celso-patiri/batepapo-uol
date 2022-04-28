@@ -1,11 +1,8 @@
 import { jestExpect as expect } from "@jest/expect";
 import "dotenv/config";
 import { MongoClient } from "mongodb";
-import {
-  getParticipants,
-  addParticipant,
-} from "../../../controllers/participants/participants.controller.js";
-import participantValidation from "../../../controllers/participants/participant.validator.js";
+import { getParticipants, addParticipant } from "../participants.controller.js";
+import participantValidation from "../participant.validator.js";
 
 const DB_NAME = process.env.DB_NAME;
 const URI = `${process.env.MONGO_URI}/${DB_NAME}`;
