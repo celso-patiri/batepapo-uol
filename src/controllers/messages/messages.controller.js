@@ -6,6 +6,7 @@ const messageFilter = (name) => {
   return {
     $or: [
       { type: "message" },
+      { to: { $regex: /todos/i } },
       {
         to: { $regex: new RegExp(name, "i") },
         type: "private_message",
@@ -55,9 +56,7 @@ const addMessage = async (req, res) => {
       .insertOne(newMessage)
       .then(() => {
         res.status(201);
-        res.json(
-          responseData(false, "Message successfully added", newMessage)
-        );
+        res.json(responseData(false, "Message successfully added", newMessage));
       })
       .catch((err) => {
         console.error(err);
