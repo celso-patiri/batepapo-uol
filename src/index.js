@@ -1,7 +1,9 @@
 import "dotenv/config";
 import express from "express";
+import { updateParticipantStatus } from "./controllers/participants/participants.controller.js";
 import messagesRouter from "./routes/messages/messages.routes.js";
 import participantsRouter from "./routes/participants/participants.routes.js";
+import headerValidation from "./utils/headerValidation.js";
 
 const MONGO_BASE_URI =
   process.env.NODE_ENV === "docker"
@@ -17,7 +19,8 @@ app.use(express.json());
 
 app.MONGO_URI = MONGO_URI;
 
-app.use("/", participantsRouter);
+app.use("/participants", participantsRouter);
 app.use("/messages", messagesRouter);
+app.post("/status", headerValidation, updateParticipantStatus);
 
 export default app;
