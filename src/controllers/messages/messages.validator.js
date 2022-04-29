@@ -1,5 +1,5 @@
 import Joi from "joi";
-import returnMessage from "../../utils/returnMessage.js";
+import responseData from "../../utils/responseData.js";
 
 const messageSchema = Joi.object({
   to: Joi.string().min(1).required().messages({
@@ -15,26 +15,16 @@ const messageSchema = Joi.object({
     .required()
     .messages({ "any.required": "'type' is a required field" }),
 });
-
-const headerValidation = async (req, res, next) => {
-  if (!req.headers.user) {
-    res.status(422);
-    return res.json(returnMessage(true, "'User' header is required"));
-  }
-
-  next();
-};
-
 const messageValidation = async (req, res, next) => {
   const payload = req.body;
 
   const { error } = messageSchema.validate(payload);
   if (error) {
     res.status(422);
-    return res.json(returnMessage(true, error.details[0].message));
+    return res.json(responseData(true, error.details[0].message));
   }
 
   next();
 };
 
-export { headerValidation, messageValidation };
+export { messageValidation };
