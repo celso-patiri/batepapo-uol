@@ -13,7 +13,6 @@ const getParticipants = async (req, res) => {
       })
     );
   } catch (err) {
-    console.error(err);
     res.status(400);
     res.json(responseData(true, err.message));
   }
@@ -38,8 +37,7 @@ const addParticipant = async (req, res) => {
         res.status(201);
         res.json(responseData(false, `Participant ${name} added`, { name }));
       })
-      .catch((err) => {
-        console.error(err);
+      .catch((_err) => {
         res.status(403);
         res.json(responseData(true, `Error creating participant ${name}`));
       });
@@ -50,8 +48,8 @@ const addParticipant = async (req, res) => {
 };
 
 const updateParticipantStatus = async (req, res) => {
-  const user = { name: req.headers.user };
   const participants = req.app.db.collection("participants");
+  const user = { name: req.headers.user };
 
   try {
     const mongoResponse = await participants.updateOne(user, {
@@ -88,15 +86,13 @@ const removeInactiveParticipants = async (participants, messages) => {
 
     inactiveParticipants.forEach(async (participant) => {
       await participants.deleteOne({ __id: participant.__id });
-      messages
-        .insertOne({
-          from: participant.name,
-          to: "Todos",
-          text: "sai da sala...",
-          type: "status",
-          time: dayjs().format("HH:mm:ss"),
-        })
-        .then((res) => console.log(res));
+      await messages.insertOne({
+        from: participant.name,
+        to: "Todos",
+        text: "sai da sala...",
+        type: "status",
+        time: dayjs().format("HH:mm:ss"),
+      });
     });
   } catch (err) {
     console.error(err);
