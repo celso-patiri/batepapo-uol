@@ -1,5 +1,4 @@
 import { jestExpect as expect } from "@jest/expect";
-import "dotenv/config";
 import { MongoClient } from "mongodb";
 import app from "../../../index.js";
 import participantValidation from "../participant.validator.js";
