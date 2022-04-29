@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import returnMessage from "../../utils/returnMessage.js";
+import responseData from "../../utils/responseData.js";
 
 //filter used on mongodb query
 const messageFilter = (name) => {
@@ -30,14 +30,14 @@ const getMessages = async (req, res) => {
 
     res.status(200);
     return res.json(
-      returnMessage(false, "Messages successfully retrieved", {
+      responseData(false, "Messages successfully retrieved", {
         messages: results,
       })
     );
   } catch (err) {
     console.error(err);
     res.status(400);
-    res.json(returnMessage(true, err.message));
+    res.json(responseData(true, err.message));
   }
 };
 
@@ -56,18 +56,18 @@ const addMessage = async (req, res) => {
       .then(() => {
         res.status(201);
         res.json(
-          returnMessage(false, "Message successfully added", newMessage)
+          responseData(false, "Message successfully added", newMessage)
         );
       })
       .catch((err) => {
         console.error(err);
         res.status(403);
-        res.json(returnMessage(true, "Error creating message"));
+        res.json(responseData(true, "Error creating message"));
       });
   } catch (err) {
     console.error(err);
     res.status(400);
-    res.json(returnMessage(true, err.message));
+    res.json(responseData(true, err.message));
   }
 };
 

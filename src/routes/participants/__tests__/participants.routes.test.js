@@ -12,6 +12,7 @@ describe("participants router tests", () => {
   beforeAll(async () => {
     await client.connect();
     app.db = client.db(DB_NAME);
+    await request(app).post("/participants").send({ name: "test" });
   });
 
   afterAll(async () => {

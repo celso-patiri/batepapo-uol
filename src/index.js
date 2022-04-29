@@ -17,7 +17,7 @@ app.use(express.json());
 
 app.MONGO_URI = MONGO_URI;
 
-app.use("/participants", participantsRouter);
+app.use("/", participantsRouter);
 app.use("/messages", messagesRouter);
 
 export default app;

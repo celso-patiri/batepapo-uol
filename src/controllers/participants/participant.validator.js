@@ -1,5 +1,5 @@
 import joi from "joi";
-import returnMessage from "../../utils/returnMessage.js";
+import responseData from "../../utils/responseData.js";
 
 const participantSchema = joi.object({
   name: joi.string().min(1).required().messages({
@@ -14,7 +14,7 @@ const participantValidation = async (req, res, next) => {
   const { error } = participantSchema.validate(payload);
   if (error) {
     res.status(422);
-    return res.json(returnMessage(true, error.details[0].message));
+    return res.json(responseData(true, error.details[0].message));
   }
 
   next();
