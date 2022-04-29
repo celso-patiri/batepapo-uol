@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import responseData from "../../utils/responseData.js";
 
 const getParticipants = async (req, res) => {
@@ -43,7 +44,6 @@ const addParticipant = async (req, res) => {
         res.json(responseData(true, `Error creating participant ${name}`));
       });
   } catch (err) {
-    console.error(err);
     res.status(400);
     res.json(responseData(true, err.message));
   }
@@ -69,10 +69,49 @@ const updateParticipantStatus = async (req, res) => {
       })
     );
   } catch (err) {
-    console.error(err);
     res.status(404);
     res.json(responseData(true, err.message));
   }
 };
 
-export { getParticipants, addParticipant, updateParticipantStatus };
+const removeInactiveParticipants = async (participants, messages) => {
+  const tenSecondsAgo = Date.now() - 10000;
+  try {
+    const inactiveParticipants = await participants
+      .find({
+        $or: [
+          { lastStatus: { $lt: tenSecondsAgo } },
+          { lastStatus: { $exists: false } },
+        ],
+      })
+      .toArray();
+
+    inactiveParticipants.forEach(async (participant) => {
+      await participants.deleteOne({ __id: participant.__id });
+      messages
+        .insertOne({
+          from: participant.name,
+          to: "Todos",
+          text: "sai da sala...",
+          type: "status",
+          time: dayjs().format("HH:mm:ss"),
+        })
+        .then((res) => console.log(res));
+    });
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+const inactiveParticipantsCleaner = (db) => {
+  const participants = db.collection("participants");
+  const messages = db.collection("messages");
+  setInterval(() => removeInactiveParticipants(participants, messages), 10000);
+};
+
+export {
+  getParticipants,
+  addParticipant,
+  updateParticipantStatus,
+  inactiveParticipantsCleaner,
+};

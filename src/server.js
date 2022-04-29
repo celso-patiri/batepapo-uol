@@ -1,4 +1,5 @@
 import { MongoClient } from "mongodb";
+import { inactiveParticipantsCleaner } from "./controllers/participants/participants.controller.js";
 import app from "./index.js";
 
 const PORT = process.env.PORT;
@@ -11,6 +12,7 @@ client
   .then(() => {
     app.db = client.db(DB_NAME);
     console.log(`Connected to mongodb on ${MONGO_URI}`);
+    inactiveParticipantsCleaner(app.db);
   })
   .catch(console.dir);
 
