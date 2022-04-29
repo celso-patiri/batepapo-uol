@@ -5,10 +5,12 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
+    "start": "node src/server.js",
+    "docker:start": "NODE_ENV=docker node src/server.js",
     "test": "node node_modules/.bin/jest --coverage",
     "ci:test": "node node_modules/.bin/jest --ci -runInBand --detectOpenHandles --forceExit",
     "testWatch": "node node_modules/.bin/jest --watch",
-    "devStart": "nodemon src/server.js --verbose"
+    "devStart": "NODE_ENV=development nodemon src/server.js --verbose"
   },
   "repository": {
     "type": "git",

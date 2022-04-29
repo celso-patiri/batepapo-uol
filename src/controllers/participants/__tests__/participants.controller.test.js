@@ -1,14 +1,15 @@
 import { jestExpect as expect } from "@jest/expect";
 import "dotenv/config";
 import { MongoClient } from "mongodb";
-import { getParticipants, addParticipant } from "../participants.controller.js";
+import app from "../../../index.js";
 import participantValidation from "../participant.validator.js";
+import { getParticipants } from "../participants.controller.js";
 
 const DB_NAME = process.env.DB_NAME;
-const URI = `${process.env.MONGO_URI}/${DB_NAME}`;
+const MONGO_URI = app.MONGO_URI;
 
 describe("Participants controller tests", () => {
-  const client = new MongoClient(URI);
+  const client = new MongoClient(MONGO_URI);
 
   const req = {
     body: { name: "" },
@@ -36,7 +37,6 @@ describe("Participants controller tests", () => {
 
   it("Should return error 422 if name is empty", async () => {
     const responseJson = await participantValidation(req, res, null);
-
     expect(res.statusCode).toBe(422);
     expect(responseJson.message).toMatch(/'name' cannot be empty/i);
   });

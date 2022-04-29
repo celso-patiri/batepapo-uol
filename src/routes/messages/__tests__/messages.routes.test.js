@@ -4,10 +4,10 @@ import { MongoClient } from "mongodb";
 import request from "supertest";
 
 const DB_NAME = process.env.DB_NAME;
-const URI = `${process.env.MONGO_URI}/${DB_NAME}`;
+const MONGO_URI = app.MONGO_URI;
 
 describe("messages routes tests", () => {
-  const client = new MongoClient(URI);
+  const client = new MongoClient(MONGO_URI);
 
   beforeAll(async () => {
     await client.connect();

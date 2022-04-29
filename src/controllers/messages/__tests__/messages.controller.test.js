@@ -2,13 +2,14 @@ import { jestExpect as expect } from "@jest/expect";
 import "dotenv/config";
 import { MongoClient } from "mongodb";
 import { messageValidation } from "../messages.validator.js";
+import app from "../../../index.js";
 import { getMessages, addMessage } from "../messages.controller.js";
 
 const DB_NAME = process.env.DB_NAME;
-const URI = `${process.env.MONGO_URI}/${DB_NAME}`;
+const MONGO_URI = app.MONGO_URI;
 
 describe("messages controller tests", () => {
-  const client = new MongoClient(URI);
+  const client = new MongoClient(MONGO_URI);
 
   const req = {
     body: {},

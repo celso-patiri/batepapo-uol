@@ -1,0 +1,27 @@
+version: "3"
+services:
+  uol-api:
+    build: #define that the image will be built from Dockerfile
+      context: . # relative path to Dockerfile
+    env_file: ./.env # env variables
+    command: npm run docker:start # run node app
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongo
+    networks:
+      - uol-network
+  mongo:
+    image: mongo:5.0.7-focal
+    ports:
+      - "27017:27017"
+    networks:
+      - uol-network
+    volumes:
+      - mongo-data:/data/db
+networks:
+  uol-network:
+    driver: bridge
+volumes:
+  mongo-data:
+    driver: local
