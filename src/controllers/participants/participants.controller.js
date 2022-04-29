@@ -1,4 +1,4 @@
-import returnMessage from "../../utils/returnMessage.js";
+import responseData from "../../utils/responseData.js";
 
 const getParticipants = async (req, res) => {
   try {
@@ -7,14 +7,14 @@ const getParticipants = async (req, res) => {
 
     res.status(200);
     return res.json(
-      returnMessage(false, "Participants successfully retrieved", {
+      responseData(false, "Participants successfully retrieved", {
         participants: results,
       })
     );
   } catch (err) {
     console.error(err);
     res.status(400);
-    res.json(returnMessage(true, err.message));
+    res.json(responseData(true, err.message));
   }
 };
 
@@ -27,7 +27,7 @@ const addParticipant = async (req, res) => {
 
     if (existingParticipant) {
       res.status(409);
-      res.json(returnMessage(true, `Name ${name} already taken`));
+      res.json(responseData(true, `Name ${name} already taken`));
       return;
     }
 
@@ -35,17 +35,44 @@ const addParticipant = async (req, res) => {
       .insertOne({ name })
       .then(() => {
         res.status(201);
-        res.json(returnMessage(false, `Participant ${name} added`, { name }));
+        res.json(responseData(false, `Participant ${name} added`, { name }));
       })
       .catch((err) => {
         console.error(err);
         res.status(403);
-        res.json(returnMessage(true, `Error creating participant ${name}`));
+        res.json(responseData(true, `Error creating participant ${name}`));
       });
   } catch (err) {
     console.error(err);
     res.status(400);
-    res.json(returnMessage(true, err.message));
+    res.json(responseData(true, err.message));
   }
 };
-export { getParticipants, addParticipant };
+
+const updateParticipantStatus = async (req, res) => {
+  const user = { name: req.headers.user };
+  const participants = req.app.db.collection("participants");
+
+  try {
+    const mongoResponse = await participants.updateOne(user, {
+      $set: { lastStatus: Date.now() },
+    });
+
+    if (mongoResponse.modifiedCount === 0)
+      throw { message: "Participant not found on database" };
+
+    res.status(200);
+    res.json(
+      responseData(false, `${user.name}: Status updated successfully`, {
+        name: user.name,
+        ...mongoResponse,
+      })
+    );
+  } catch (err) {
+    console.error(err);
+    res.status(404);
+    res.json(responseData(true, err.message));
+  }
+};
+
+export { getParticipants, addParticipant, updateParticipantStatus };
