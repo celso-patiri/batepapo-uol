@@ -21,7 +21,7 @@ describe("messages routes tests", () => {
   const mockMessage = {
     to: "test",
     text: "this message was sent from messages.routes.tests.js",
-    type: "message",
+    type: "private_message",
   };
 
   test("POST /messages", async () => {
