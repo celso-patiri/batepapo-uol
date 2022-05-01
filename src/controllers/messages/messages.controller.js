@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import { stripHtml } from "string-strip-html";
 import responseData from "../../utils/responseData.js";
 
 //filter used on mongodb query
@@ -42,15 +43,23 @@ const getMessages = async (req, res) => {
   }
 };
 
+const getCleanMessage = (message) => {
+  const cleanMessage = {};
+  for (const [key, value] of Object.entries(message)) {
+    cleanMessage[key] = stripHtml(value).result.trim();
+  }
+  return cleanMessage;
+};
+
 const addMessage = async (req, res) => {
   try {
     const messages = req.app.db.collection("messages");
 
-    const newMessage = {
-      time: dayjs().format("HH:mm:ss"),
+    const newMessage = getCleanMessage({
       from: req.headers.user,
       ...req.body,
-    };
+    });
+    newMessage.time = dayjs().format("HH:mm:ss");
 
     messages
       .insertOne(newMessage)
