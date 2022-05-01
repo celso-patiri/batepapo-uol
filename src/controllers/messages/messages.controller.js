@@ -1,4 +1,6 @@
 import dayjs from "dayjs";
+import { response } from "express";
+import { ObjectId } from "mongodb";
 import { stripHtml } from "string-strip-html";
 import responseData from "../../utils/responseData.js";
 
@@ -56,7 +58,7 @@ const addMessage = async (req, res) => {
     const messages = req.app.db.collection("messages");
 
     const newMessage = getCleanMessage({
-      from: req.headers.user,
+      from: stripHtml(req.headers.user).result.trim(),
       ...req.body,
     });
     newMessage.time = dayjs().format("HH:mm:ss");
@@ -79,4 +81,39 @@ const addMessage = async (req, res) => {
   }
 };
 
-export { addMessage, getMessages };
+const deleteMessage = async (req, res) => {
+  try {
+    const messages = req.app.db.collection("messages");
+    const messageId = stripHtml(req.params.messageId).result.trim();
+    const user = stripHtml(req.headers.user).result.trim();
+
+    const existingMessage = await messages.findOne({
+      _id: ObjectId(messageId),
+    });
+
+    if (!existingMessage) {
+      res.status(404);
+      return res.json(responseData(true, "Message not found in database"));
+    }
+
+    if (existingMessage.from !== user) {
+      res.status(401);
+      return res.json(
+        responseData(true, `User ${user} does not own message ${messageId}`)
+      );
+    }
+
+    messages.deleteOne({ _id: ObjectId(messageId) }).then(() => {
+      res.status(200);
+      return res.json(
+        responseData(false, "Message deleted successfully", { user, messageId })
+      );
+    });
+  } catch (err) {
+    console.log(err.message);
+    res.status(400);
+    res.json(responseData(true, err.message));
+  }
+};
+
+export { addMessage, getMessages, deleteMessage };
