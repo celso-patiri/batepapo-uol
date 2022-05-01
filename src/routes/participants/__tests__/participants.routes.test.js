@@ -55,7 +55,7 @@ describe("participants router tests", () => {
     await request(app)
       .post("/status")
       .set("User", "")
-      .expect(422)
+      .expect(401)
       .then((res) => {
         const response = JSON.parse(res.text);
         expect(response.message).toMatch(/'user' header is required/i);
