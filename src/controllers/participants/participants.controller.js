@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import { stripHtml } from "string-strip-html";
 import responseData from "../../utils/responseData.js";
 
 const getParticipants = async (req, res) => {
@@ -20,7 +21,7 @@ const getParticipants = async (req, res) => {
 
 const addParticipant = async (req, res) => {
   try {
-    const name = req.body.name;
+    const name = stripHtml(req.body.name).result.trim();
 
     const participants = req.app.db.collection("participants");
     const existingParticipant = await participants.findOne({ name });
@@ -49,7 +50,7 @@ const addParticipant = async (req, res) => {
 
 const updateParticipantStatus = async (req, res) => {
   const participants = req.app.db.collection("participants");
-  const user = { name: req.headers.user };
+  const user = { name: stripHtml(req.headers.user).result.trim() };
 
   try {
     const mongoResponse = await participants.updateOne(user, {
