@@ -5,12 +5,24 @@ services:
       context: . # relative path to Dockerfile
     env_file: ./.env # env variables
     command: npm run docker:start # run node app
+    container_name: uolchat-api
     ports:
       - "5000:5000"
     depends_on:
       - mongo
     networks:
       - uol-network
+  uol-front:
+    build:
+      context: ./frontend/
+      dockerfile: Dockerfile.frontend
+    container_name: uolchat-frontend
+    depends_on:
+      - uol-api
+    networks:
+      - uol-network
+    ports:
+      - "80:80"
   mongo:
     image: mongo:5.0.7-focal
     ports:
