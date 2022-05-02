@@ -42,7 +42,8 @@ jobs:
       - run:
           name: Run tests
           command: npm run ci:test
-      - coveralls/upload
+      - coveralls/upload:
+        token: p8ffNog6KteYHBPjfe2yqCtHdz9gGE0Z0
 
 workflows:
   # Below is the definition of your workflow.
