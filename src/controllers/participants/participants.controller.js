@@ -78,21 +78,18 @@ const removeInactiveParticipants = async (participants, messages) => {
   try {
     const inactiveParticipants = await participants
       .find({
-        $or: [
-          { lastStatus: { $lt: tenSecondsAgo } },
-          { lastStatus: { $exists: false } },
-        ],
+        $or: [{ lastStatus: { $lt: tenSecondsAgo } }],
       })
       .toArray();
 
     inactiveParticipants.forEach(async (participant) => {
       await participants.deleteOne({ __id: participant.__id });
       await messages.insertOne({
+        time: dayjs().format("HH:mm:ss"),
         from: participant.name,
         to: "Todos",
         text: "sai da sala...",
         type: "status",
-        time: dayjs().format("HH:mm:ss"),
       });
     });
   } catch (err) {
