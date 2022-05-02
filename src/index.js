@@ -1,5 +1,6 @@
 import "dotenv/config";
 import express from "express";
+import cors from "cors";
 import { updateParticipantStatus } from "./controllers/participants/participants.controller.js";
 import messagesRouter from "./routes/messages/messages.routes.js";
 import participantsRouter from "./routes/participants/participants.routes.js";
@@ -16,6 +17,7 @@ const MONGO_URI = `${MONGO_BASE_URI}:${MONGO_PORT}/${DB_NAME}`;
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 app.MONGO_URI = MONGO_URI;
 
