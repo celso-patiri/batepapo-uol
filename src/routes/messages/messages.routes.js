@@ -1,16 +1,34 @@
 import express from "express";
 import {
   addMessage,
-  getMessages,
   deleteMessage,
+  getMessages,
+  updateMessage,
 } from "../../controllers/messages/messages.controller.js";
-import { messageValidation } from "../../controllers/messages/messages.validator.js";
+import {
+  validateMessage,
+  validadeMessageExistence,
+} from "../../controllers/messages/messages.validator.js";
 import headerValidation from "../../utils/headerValidation.js";
 
 const router = express.Router();
 
 router.get("/", headerValidation, getMessages);
-router.post("/", headerValidation, messageValidation, addMessage);
-router.delete("/:messageId", headerValidation, deleteMessage);
+router.post("/", headerValidation, validateMessage, addMessage);
+
+router.put(
+  "/:messageId",
+  headerValidation,
+  validateMessage,
+  validadeMessageExistence,
+  updateMessage
+);
+
+router.delete(
+  "/:messageId",
+  headerValidation,
+  validadeMessageExistence,
+  deleteMessage
+);
 
 export default router;

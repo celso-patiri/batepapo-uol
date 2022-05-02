@@ -1,5 +1,4 @@
 import dayjs from "dayjs";
-import { response } from "express";
 import { ObjectId } from "mongodb";
 import { stripHtml } from "string-strip-html";
 import responseData from "../../utils/responseData.js";
@@ -81,27 +80,47 @@ const addMessage = async (req, res) => {
   }
 };
 
+const updateMessage = async (req, res) => {
+  try {
+    const messages = req.app.db.collection("messages");
+    const messageId = stripHtml(req.params.messageId).result;
+
+    const newMessage = getCleanMessage({ ...req.body });
+    newMessage.time = dayjs().format("HH:mm:ss");
+
+    messages
+      .updateOne(
+        { _id: ObjectId(messageId) },
+        {
+          $set: { to: newMessage.to },
+          $set: { text: newMessage.text },
+          $set: { type: newMessage.type },
+          $set: { time: newMessage.time },
+        }
+      )
+      .then(() => {
+        res.status(200);
+        res.json(
+          responseData(false, "Message successfully updated", newMessage)
+        );
+      })
+      .catch((err) => {
+        console.error(err);
+        res.status(403);
+        res.json(responseData(true, "Error updating message"));
+      });
+  } catch (err) {
+    console.error(err);
+    res.status(400);
+    res.json(responseData(true, err.message));
+  }
+};
+
 const deleteMessage = async (req, res) => {
   try {
     const messages = req.app.db.collection("messages");
-    const messageId = stripHtml(req.params.messageId).result.trim();
+    const messageId = stripHtml(req.params.messageId).result;
     const user = stripHtml(req.headers.user).result.trim();
-
-    const existingMessage = await messages.findOne({
-      _id: ObjectId(messageId),
-    });
-
-    if (!existingMessage) {
-      res.status(404);
-      return res.json(responseData(true, "Message not found in database"));
-    }
-
-    if (existingMessage.from !== user) {
-      res.status(401);
-      return res.json(
-        responseData(true, `User ${user} does not own message ${messageId}`)
-      );
-    }
 
     messages.deleteOne({ _id: ObjectId(messageId) }).then(() => {
       res.status(200);
@@ -116,4 +135,4 @@ const deleteMessage = async (req, res) => {
   }
 };
 
-export { addMessage, getMessages, deleteMessage };
+export { addMessage, getMessages, deleteMessage, updateMessage };

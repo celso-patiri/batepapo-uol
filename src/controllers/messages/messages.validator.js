@@ -1,4 +1,6 @@
 import Joi from "joi";
+import { ObjectId } from "mongodb";
+import { stripHtml } from "string-strip-html";
 import responseData from "../../utils/responseData.js";
 
 const messageSchema = Joi.object({
@@ -15,7 +17,8 @@ const messageSchema = Joi.object({
     .required()
     .messages({ "any.required": "'type' is a required field" }),
 });
-const messageValidation = async (req, res, next) => {
+
+const validateMessage = async (req, res, next) => {
   const payload = req.body;
 
   const { error } = messageSchema.validate(payload);
@@ -27,4 +30,27 @@ const messageValidation = async (req, res, next) => {
   next();
 };
 
-export { messageValidation };
+const validadeMessageExistence = async (req, res, next) => {
+  const messages = req.app.db.collection("messages");
+  const messageId = stripHtml(req.params.messageId).result.trim();
+  const user = stripHtml(req.headers.user).result.trim();
+
+  const existingMessage = await messages.findOne({
+    _id: ObjectId(messageId),
+  });
+
+  if (!existingMessage) {
+    res.status(404);
+    return res.json(responseData(true, "Message not found in database"));
+  }
+
+  if (existingMessage.from !== user) {
+    res.status(401);
+    return res.json(
+      responseData(true, `User ${user} does not own message ${messageId}`)
+    );
+  }
+  next();
+};
+
+export { validateMessage, validadeMessageExistence };

@@ -1,10 +1,15 @@
 import { jestExpect as expect } from "@jest/expect";
 import app from "../../../index.js";
 import { MongoClient, ObjectId } from "mongodb";
+import crypto from "crypto";
 import request from "supertest";
 
 const DB_NAME = process.env.DB_NAME;
 const MONGO_URI = app.MONGO_URI;
+
+const genRanHex = () => {
+  return crypto.randomBytes(8).toString("hex").substring(0, 12);
+};
 
 describe("messages routes tests", () => {
   const client = new MongoClient(MONGO_URI);
@@ -77,12 +82,8 @@ describe("messages routes tests", () => {
       });
   });
 
-  describe("messages routes DELETE tests", () => {
-    const genRanHex = (size) =>
-      [...Array(size)]
-        .map(() => Math.floor(Math.random() * 16).toString(16))
-        .join("");
-    const randomId = genRanHex(12);
+  describe("/messages route DELETE tests", () => {
+    const randomId = genRanHex();
     const messages = appDb.collection("messages");
 
     beforeEach(async () => {
@@ -119,7 +120,7 @@ describe("messages routes tests", () => {
     });
 
     it("should return 404 if message does not exist", async () => {
-      const wrongId = genRanHex(12);
+      const wrongId = genRanHex();
       await request(app)
         .delete(`/messages/${wrongId}`)
         .set("User", "testUser")
@@ -138,6 +139,71 @@ describe("messages routes tests", () => {
         .then((res) => {
           const response = JSON.parse(res.text);
           expect(response.message).toMatch(/message deleted/i);
+        });
+    });
+  });
+
+  describe("/message route PUT tests", () => {
+    const randomId = genRanHex();
+    const messages = appDb.collection("messages");
+
+    beforeEach(async () => {
+      await messages.insertOne({
+        _id: new ObjectId(randomId),
+        from: "testUser",
+        ...mockMessage,
+      });
+    });
+
+    afterEach(async () => {
+      await messages.deleteOne({ _id: ObjectId(randomId) });
+    });
+
+    it("should return 401 if 'user' header is not provided ", async () => {
+      await request(app)
+        .put(`/messages/${randomId}`)
+        .send(mockMessage)
+        .expect(401)
+        .then((res) => {
+          const response = JSON.parse(res.text);
+          expect(response.message).toMatch(/'user' header is required/i);
+        });
+    });
+
+    it("should return 401 if message does not belong to user", async () => {
+      await request(app)
+        .put(`/messages/${randomId}`)
+        .send(mockMessage)
+        .set("User", "NotTestUser")
+        .expect(401)
+        .then((res) => {
+          const response = JSON.parse(res.text);
+          expect(response.message).toMatch(/does not own message/i);
+        });
+    });
+
+    it("should return 404 if message does not exist", async () => {
+      const wrongId = genRanHex();
+      await request(app)
+        .put(`/messages/${wrongId}`)
+        .send(mockMessage)
+        .set("User", "testUser")
+        .expect(404)
+        .then((res) => {
+          const response = JSON.parse(res.text);
+          expect(response.message).toMatch(/message not found in database/i);
+        });
+    });
+
+    it("should return 200 if request is correct", async () => {
+      await request(app)
+        .put(`/messages/${randomId}`)
+        .send(mockMessage)
+        .set("User", "testUser")
+        .expect(200)
+        .then((res) => {
+          const response = JSON.parse(res.text);
+          expect(response.message).toMatch(/message successfully updated/i);
         });
     });
   });
