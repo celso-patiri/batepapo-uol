@@ -20,7 +20,7 @@ const messageFilter = (name) => {
 const fetchMessages = async (user, messages, limit) => {
   const filter = messageFilter(user);
   if (isNaN(limit)) return await messages.find(filter).toArray();
-  return await messages.find(filter).limit(limit).sort({ _id: -1 }).toArray();
+  return await messages.find(filter).limit(limit).sort({ _id: 1 }).toArray();
 };
 
 const getMessages = async (req, res) => {
