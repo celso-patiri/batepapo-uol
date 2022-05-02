@@ -8,8 +8,4 @@
 </div>
  
 
-  
-  
-
-
-Uol chatroom api clone
+ 
