@@ -6,7 +6,8 @@ orbs:
   # The Node.js orb contains a set of prepackaged CircleCI configuration you can utilize
   # Orbs reduce the amount of configuration required for common tasks.
   # See the orb documentation here: https://circleci.com/developer/orbs/orb/circleci/node
-  node: circleci/node@4.7
+  node: circleci/node@5.0.2
+  coveralls: coveralls/coveralls@1.0.6
 
 jobs:
   build-and-test:
@@ -41,12 +42,12 @@ jobs:
       - run:
           name: Run tests
           command: npm run ci:test
+      - coveralls/upload
 
 workflows:
   # Below is the definition of your workflow.
   # Inside the workflow, you provide the jobs you want to run, e.g this workflow runs the build-and-test job above.
   # CircleCI will run this workflow on every commit.
-  # For more details on extnding your workflow, see the configuration docs: https://circleci.com/docs/2.0/configuration-reference/#workflows
   sample:
     jobs:
       - build-and-test
