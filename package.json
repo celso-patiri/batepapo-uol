@@ -8,7 +8,7 @@
     "start": "node src/server.js",
     "docker:start": "NODE_ENV=docker node src/server.js",
     "test": "node --experimental-vm-modules node_modules/.bin/jest --coverage",
-    "ci:test": "node --experimental-vm-modules node_modules/.bin/jest --ci -runInBand --detectOpenHandles --forceExit",
+    "ci:test": "node --experimental-vm-modules node_modules/.bin/jest --coverage --ci -runInBand --detectOpenHandles --forceExit",
     "testWatch": "node --experimental-vm-modules node_modules/.bin/jest --watch",
     "devStart": "NODE_ENV=development nodemon src/server.js --verbose"
   },
